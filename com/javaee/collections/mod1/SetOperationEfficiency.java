@@ -76,6 +76,6 @@ public class SetOperationEfficiency {
         return String.format("%-15s%-8.4f%-8.4f%-8.4f%-8.4f",setName
                 ,resultSet[0],resultSet[1],resultSet[2],resultSet[3]);
     }
-//String s = String.format("Курс валют: %-4s%-8.4f  %-4s%-8.4f","USD", 58.4643, "EUR", 63.3695);
+///String s = String.format("Курс валют: %-4s%-8.4f  %-4s%-8.4f","USD", 58.4643, "EUR", 63.3695);
 
 }
