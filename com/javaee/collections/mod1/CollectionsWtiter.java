@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class CollectionsEfficiency {
+public class CollectionsWtiter {
 
     public void printAndWriteFile(int countElements) throws IOException {
 
@@ -14,22 +14,22 @@ public class CollectionsEfficiency {
        FileWriter fileWriter = new FileWriter(result,true);
 
         List<Integer> arrayList = new ArrayList<>();
-        arrayList = ListOperationEfficiency.initList(arrayList,countElements);
+        CollectionsHelper.initCollection(arrayList,countElements);
         List<Integer> linkedList = new LinkedList<>();
-        linkedList = ListOperationEfficiency.initList(linkedList,countElements);
+        CollectionsHelper.initCollection(linkedList,countElements);
         Set<Integer> hashSet = new HashSet<>();
-        hashSet = SetOperationEfficiency.initSet(hashSet,countElements);
+        CollectionsHelper.initCollection(hashSet,countElements);
         Set<Integer> treeSet = new TreeSet<>();
-        treeSet = SetOperationEfficiency.initSet(treeSet,countElements);
+        CollectionsHelper.initCollection(treeSet,countElements);
 
         String title = String.format("%-15d%-10s%-12s%-15s%-15s%-9s%-17s%-15s",countElements
                 ,"add(ms)","remove(ms)","contains(ms)","populate(ms)","get(ms)","iterator.add(ms)","iterator.remove(ms)");
         String line = "-----------------------------------------------------------------------------" +
                 "-----------------------------------";
-        String resultArrayList = ListOperationEfficiency.efficiencyListOperation(arrayList,countElements);
-        String resultLinkedList = ListOperationEfficiency.efficiencyListOperation(linkedList,countElements);
-        String resultHashSet = SetOperationEfficiency.efficiencySetOperation(hashSet,countElements);
-        String resultTreeSet = SetOperationEfficiency.efficiencySetOperation(treeSet,countElements);
+        String resultArrayList = ListOperationEfficiency.efficiencyListOperation(arrayList);
+        String resultLinkedList = ListOperationEfficiency.efficiencyListOperation(linkedList);
+        String resultHashSet = SetOperationEfficiency.efficiencySetOperation(hashSet);
+        String resultTreeSet = SetOperationEfficiency.efficiencySetOperation(treeSet);
 
         System.out.println(line);
         System.out.println(title);
@@ -54,12 +54,5 @@ public class CollectionsEfficiency {
 
     }
 
-    public static void main(String[] args)throws IOException{
-        CollectionsEfficiency collectionsEfficiency = new CollectionsEfficiency();
-        int[] elements = {10000, 100000, 1000000};
 
-        for (int i = 0; i < elements.length; i++){
-            collectionsEfficiency.printAndWriteFile(elements[i]);
-        }
-    }
 }

@@ -1,89 +1,70 @@
 package com.javaee.collections.mod1;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 /**
  * Created by Den on 14.08.2016.
+ *
+ * dry
+ * don't repeat yourself
  */
 public class SetOperationEfficiency {
 
-    public static Set initSet(Set set, int countOperation){
-        Random random = new Random();
-        int element;
-        for(int i = 0; i < countOperation; i++){
-            element = random.nextInt(countOperation);
-            set.add(element);
-        }
-        return set;
-    }
+    public static Random random = new Random();
 
-    public static long countTimeAdd(Set set, int countOperation){
-        Random random = new Random();
-        int element = random.nextInt(countOperation);
+    public static long countTimeAdd(Set set){
+        int element = random.nextInt(set.size());
         long currentTimeMillis = System.currentTimeMillis();
         set.add(element);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static long countTimeRemove(Set set, int countOperation){
-        Random random = new Random();
-        int indexElement = random.nextInt(countOperation);
+    public static long countTimeRemove(Set set){
+        int indexElement = random.nextInt(set.size());
         long currentTimeMillis = System.currentTimeMillis();
         set.remove(indexElement);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static long countTimeContains(Set set, int countOperation){
-        Random random = new Random();
-        int value = random.nextInt(countOperation);
+    public static long countTimeContains(Set set){
+        int value = random.nextInt(set.size());
         long currentTimeMillis = System.currentTimeMillis();
         set.contains(value);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static long countTimePopulate(Set set, int countOperation){
-        Random random = new Random();
-        int countElemets = random.nextInt(countOperation);
-        Set<Integer> collection = new HashSet<>(countElemets);
-        for(int i = 0; i < 100; i++){
-            collection.add(i);
-        }
+    public static long countTimePopulate(Set<Integer> set){
+        Set<Integer> collection = IntStream.range(0, 100).boxed().collect(Collectors.toSet());
         long currentTimeMillis = System.currentTimeMillis();
         collection.addAll(set);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static String efficiencySetOperation(Set set, int countElements){
-        double[] resultSet = new double[4];
+
+
+    public static String efficiencySetOperation(Set<Integer> set){
         int numberRepetitions = 100;
-        long[] times = new long[numberRepetitions];
 
-        for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimeAdd(set,countElements);
-        }
-        resultSet[0] = Arrays.stream(times).average().getAsDouble();
+        List<Double> collect = Stream.<Function<Set<Integer>, Long>>of(SetOperationEfficiency::countTimeAdd,
+                SetOperationEfficiency::countTimeRemove,
+                SetOperationEfficiency::countTimeContains,
+                SetOperationEfficiency::countTimePopulate)
+                .map(f -> countAverage(set, numberRepetitions, f))
+                .collect(Collectors.toList());
 
-       for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimeRemove(set,countElements);
-        }
-        resultSet[1] = Arrays.stream(times).average().getAsDouble();
+        String collectionClassName = set.getClass().getSimpleName();
 
-        for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimeContains(set,countElements);
-        }
-        resultSet[2] = Arrays.stream(times).average().getAsDouble();
-
-        for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimePopulate(set,countElements);
-        }
-        resultSet[3] = Arrays.stream(times).average().getAsDouble();
-
-       String s = set.getClass().toString();
-       String setName = s.substring(s.lastIndexOf(".")+1);
-
-        return String.format("%-15s%-10.2f%-12.2f%-15.2f%-15.2f",setName
-                ,resultSet[0],resultSet[1],resultSet[2],resultSet[3]);
+        return String.format("%-15s%-10.2f%-12.2f%-15.2f",collectionClassName
+                ,collect.get(0),collect.get(1),collect.get(2),collect.get(3));
     }
 
-
+    public static double countAverage(Set<Integer> set, int times, Function<Set<Integer>, Long> function){
+        long[] array = LongStream.generate(() -> function.apply(set)).limit(times).toArray();
+        return Arrays.stream(array).average().orElse(0);
+    }
 }

@@ -2,78 +2,64 @@ package com.javaee.collections.mod1;
 
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 
 public class ListOperationEfficiency {
 
-    public static List initList(List list, int countOperation){
-        Random random = new Random();
-        int element;
-        for(int i = 0; i < countOperation; i++){
-            element = random.nextInt(countOperation);
-            list.add(element);
-        }
-        return list;
-    }
+    public static Random random = new Random();    
 
-    public static long countTimeAdd(List list, int countOperation){
-        Random random = new Random();
-        int element = random.nextInt(countOperation);
-        int i = random.nextInt(countOperation);
+    public static long countTimeAdd(List list){
+        int element = random.nextInt(list.size());
+        int i = random.nextInt(list.size());
         long currentTimeMillis = System.currentTimeMillis();
             list.add(i,element);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static long countTimeGet(List list, int countOperation){
-        Random random = new Random();
-        int indexElement = random.nextInt(countOperation);
+    public static long countTimeGet(List list){
+        int indexElement = random.nextInt(list.size());
         long currentTimeMillis = System.currentTimeMillis();
         list.get(indexElement);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static long countTimeRemove(List list, int countOperation){
-        Random random = new Random();
-        int indexElement = random.nextInt(countOperation);
+    public static long countTimeRemove(List list){
+        int indexElement = random.nextInt(list.size());
         long currentTimeMillis = System.currentTimeMillis();
         list.remove(indexElement);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static long countTimeContains(List list, int countOperation){
-        Random random = new Random();
-        int value = random.nextInt(countOperation);
+    public static long countTimeContains(List list){
+        int value = random.nextInt(list.size());
         long currentTimeMillis = System.currentTimeMillis();
         list.contains(value);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static long countTimePopulate(List list, int countOperation){
-        Random random = new Random();
-        int countElemets = random.nextInt(countOperation);
-        List<Integer> collection = new ArrayList<>(countElemets);
-        for(int i = 0; i < 100; i++){
-            collection.add(i);
-        }
+    public static long countTimePopulate(List<Integer> list){
+        List<Integer> collection = IntStream.range(0, 100).boxed().collect(Collectors.toList());
         long currentTimeMillis = System.currentTimeMillis();
         collection.addAll(list);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static long countTimeIteratorAdd(List list, int countOperation){
-        ListIterator iterator = list.listIterator();
-        Random random = new Random();
-        int element = random.nextInt(countOperation);
+    public static long countTimeIteratorAdd(List<Integer> list){
+        ListIterator<Integer> iterator = list.listIterator();
+        int element = random.nextInt(list.size());
         long currentTimeMillis = System.currentTimeMillis();
         iterator.next();
         iterator.add(element);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static long countTimeIteratorRemove(List list, int countOperation){
-        Random random = new Random();
-        int index = random.nextInt(countOperation);
+    public static <T> long countTimeIteratorRemove(List<T> list){
+        int index = random.nextInt(list.size());
         ListIterator iterator = list.listIterator(index);
         long currentTimeMillis = System.currentTimeMillis();
         iterator.next();
@@ -81,56 +67,27 @@ public class ListOperationEfficiency {
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
-    public static String efficiencyListOperation(List list, int countElements){
-        double[] resultArray = new double[7];
+    public static String efficiencyListOperation(List<Integer> list){
         int numberRepetitions = 100;
-        long[] times = new long[numberRepetitions];
 
-        for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimeAdd(list,countElements);
-        }
-        resultArray[0] = Arrays.stream(times).average().getAsDouble();
+        List<Double> collect = Stream.<Function<List<Integer>, Long>>of(ListOperationEfficiency::countTimeAdd,
+                ListOperationEfficiency::countTimeGet,
+                ListOperationEfficiency::countTimeRemove,
+                ListOperationEfficiency::countTimeContains,
+                ListOperationEfficiency::countTimePopulate,
+                ListOperationEfficiency::countTimeIteratorAdd,
+                ListOperationEfficiency::countTimeIteratorRemove)
+                .map(f -> countAverage(list, numberRepetitions, f))
+                .collect(Collectors.toList());
 
-        for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimeGet(list,countElements);
-        }
-        resultArray[1] = Arrays.stream(times).average().getAsDouble();
+        String collectionClassName = list.getClass().getSimpleName();
 
-        for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimeRemove(list,countElements);
-        }
-        resultArray[2] = Arrays.stream(times).average().getAsDouble();
-
-        for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimeContains(list,countElements);
-        }
-        resultArray[3] = Arrays.stream(times).average().getAsDouble();
-
-        for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimePopulate(list,countElements);
-        }
-        resultArray[4] = Arrays.stream(times).average().getAsDouble();
-
-        for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimeIteratorAdd(list,countElements);
-        }
-        resultArray[5] = Arrays.stream(times).average().getAsDouble();
-
-        for(int i = 0; i < numberRepetitions; i++){
-            times[i] = countTimeIteratorRemove(list,countElements);
-        }
-        resultArray[6] = Arrays.stream(times).average().getAsDouble();
-
-        String s = list.getClass().toString();
-        String setName = s.substring(s.lastIndexOf(".")+1);
-
-        return String.format("%-15s%-10.2f%-12.2f%-15.2f%-15.2f%-9.2f%-17.2f%-15.2f",setName
-                ,resultArray[0],resultArray[1],resultArray[3],resultArray[4],resultArray[2],resultArray[5],resultArray[6]);
+        return String.format("%-15s%-10.2f%-12.2f%-15.2f%-15.2f%-9.2f%-17.2f%-15.2f",collectionClassName
+                ,collect.get(0),collect.get(1),collect.get(3),collect.get(4),collect.get(2),collect.get(5),collect.get(6));
     }
 
-
-
-
-
-
+    public static double countAverage(List<Integer> list, int times, Function<List<Integer>, Long> function){
+        long[] array = LongStream.generate(() -> function.apply(list)).limit(times).toArray();
+        return Arrays.stream(array).average().orElse(0);
+    }
 }
