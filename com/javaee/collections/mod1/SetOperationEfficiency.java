@@ -7,13 +7,21 @@ import java.util.*;
  */
 public class SetOperationEfficiency {
 
-    public static long countTimeAdd(Set set, int countOperation){
+    public static Set initSet(Set set, int countOperation){
         Random random = new Random();
-        int element, i;
-        long currentTimeMillis = System.currentTimeMillis();
-        for( i = element = 0; i < countOperation; i++, element = random.nextInt(countOperation)){
+        int element;
+        for(int i = 0; i < countOperation; i++){
+            element = random.nextInt(countOperation);
             set.add(element);
         }
+        return set;
+    }
+
+    public static long countTimeAdd(Set set, int countOperation){
+        Random random = new Random();
+        int element = random.nextInt(countOperation);
+        long currentTimeMillis = System.currentTimeMillis();
+        set.add(element);
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
@@ -73,9 +81,9 @@ public class SetOperationEfficiency {
        String s = set.getClass().toString();
        String setName = s.substring(s.lastIndexOf(".")+1);
 
-        return String.format("%-15s%-8.4f%-8.4f%-8.4f%-8.4f",setName
+        return String.format("%-15s%-10.2f%-12.2f%-15.2f%-15.2f",setName
                 ,resultSet[0],resultSet[1],resultSet[2],resultSet[3]);
     }
-///String s = String.format("Курс валют: %-4s%-8.4f  %-4s%-8.4f","USD", 58.4643, "EUR", 63.3695);
+
 
 }

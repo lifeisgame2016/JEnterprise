@@ -6,13 +6,22 @@ import java.util.*;
 
 public class ListOperationEfficiency {
 
+    public static List initList(List list, int countOperation){
+        Random random = new Random();
+        int element;
+        for(int i = 0; i < countOperation; i++){
+            element = random.nextInt(countOperation);
+            list.add(element);
+        }
+        return list;
+    }
+
     public static long countTimeAdd(List list, int countOperation){
         Random random = new Random();
-        int element, i;
+        int element = random.nextInt(countOperation);
+        int i = random.nextInt(countOperation);
         long currentTimeMillis = System.currentTimeMillis();
-        for( i = element = 0; i < countOperation; i++, element = random.nextInt(countOperation)){
             list.add(i,element);
-        }
         return System.currentTimeMillis() - currentTimeMillis;
     }
 
@@ -115,7 +124,7 @@ public class ListOperationEfficiency {
         String s = list.getClass().toString();
         String setName = s.substring(s.lastIndexOf(".")+1);
 
-        return String.format("%-15s%-8.4f%-8.4f%-8.4f%-8.4f%-8.4f%-8.4f%-8.4f",setName
+        return String.format("%-15s%-10.2f%-12.2f%-15.2f%-15.2f%-9.2f%-17.2f%-15.2f",setName
                 ,resultArray[0],resultArray[1],resultArray[3],resultArray[4],resultArray[2],resultArray[5],resultArray[6]);
     }
 
