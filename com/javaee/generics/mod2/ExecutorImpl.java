@@ -1,4 +1,4 @@
-package com.javaee.generics.mod2;
+package javaee.generics.mod2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,12 +38,16 @@ public class ExecutorImpl<T> implements Executor<T> {
     public void execute() {
         for(Map.Entry<? extends Task<? extends T>, ? extends Validator<? extends T>> task : taskMap.entrySet()){
             task.getKey().execute();
-            if (task.getValue() == null) validResults.add(task.getKey().getResult());
-            else {
+            if (task.getValue() == null) {
+                validResults.add(task.getKey().getResult());
+            } else {
                 T result = task.getKey().getResult();
                 Validator<T> value = (Validator<T>)task.getValue();
-                if (value.isValid(result)) validResults.add(result);
-                else invalidResults.add(result);
+                if (value.isValid(result)) {
+                    validResults.add(result);
+                } else {
+                    invalidResults.add(result);
+                }
             }
         }
         inProcess = true;
