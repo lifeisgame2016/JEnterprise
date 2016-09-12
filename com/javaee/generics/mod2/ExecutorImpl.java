@@ -12,7 +12,7 @@ public class ExecutorImpl<T> implements Executor<T> {
 
     private boolean wasExecuted;
 
-    private Map<Task<? extends T>, Validator<? extends T>> taskMap = new HashMap<>();
+    private Map<Task<? extends T>, Validator<? super T>> taskMap = new HashMap<>();
     private List<T> validResults = new ArrayList<>();
     private List<T> invalidResults = new ArrayList<>();
 
@@ -26,7 +26,7 @@ public class ExecutorImpl<T> implements Executor<T> {
     }
 
     @Override
-    public void addTask(Task<? extends T> task, Validator<? extends T> validator) throws ExecutorException {
+    public void addTask(Task<? extends T> task, Validator<? super T> validator) throws ExecutorException {
         if(wasExecuted){
             throw new ExecutorException("Tasks have already been executed ");
         }
@@ -36,16 +36,14 @@ public class ExecutorImpl<T> implements Executor<T> {
 
     @Override
     public void execute() {
-        for(Map.Entry<? extends Task<? extends T>, ? extends Validator<? extends T>> task : taskMap.entrySet()){
+        for(Map.Entry<? extends Task<? extends T>, ? extends Validator<? super T>> task : taskMap.entrySet()){
             Task<? extends T> taskKey = task.getKey();
-            Validator<? extends T> taskValue = task.getValue();
+            Validator<? super T> taskValue = task.getValue();
             taskKey.execute();
-            if (taskValue == null) {
-                validResults.add(taskKey.getResult());
-            } else {
+//            validResults.add(taskKey.getResult());
+            if (taskValue != null) {
                 T result = taskKey.getResult();
-                Validator<T> value = (Validator<T>) taskValue;
-                if (value.isValid(result)) {
+                if (taskValue.isValid(result)) {
                     validResults.add(result);
                 } else {
                     invalidResults.add(result);

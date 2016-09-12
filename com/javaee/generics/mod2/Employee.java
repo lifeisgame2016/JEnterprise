@@ -1,4 +1,4 @@
-package com.javaee.generics.mod2;
+package javaee.generics.mod2;
 
 /**
  * Created by Den on 26.08.2016.

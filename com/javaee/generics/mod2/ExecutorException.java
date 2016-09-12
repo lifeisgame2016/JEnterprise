@@ -1,4 +1,4 @@
-package com.javaee.generics.mod2;
+package javaee.generics.mod2;
 
 
 public class ExecutorException extends Exception {

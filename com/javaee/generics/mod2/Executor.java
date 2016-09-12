@@ -1,4 +1,4 @@
-package com.javaee.generics.mod2;
+package javaee.generics.mod2;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface Executor <T> {
     // isValid вернет true для этого результата
     // Результат таска будет записан в InvalidResults если validator.isValid вернет false для этого результата
     // Бросает Эксепшн если уже был вызван метод execute()
-    void addTask(Task<? extends T> task, Validator<? extends T> validator) throws ExecutorException;
+    void addTask(Task<? extends T> task, Validator<? super T> validator) throws ExecutorException;
 
     // Выполнить все добавленые таски
     void execute();

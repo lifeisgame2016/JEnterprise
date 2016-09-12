@@ -1,4 +1,4 @@
-package com.javaee.generics.mod2;
+package javaee.generics.mod2;
 
 
 import org.junit.Test;
@@ -12,8 +12,7 @@ import static org.junit.Assert.*;
 public class ExecutorImplTest {
 
 
-
-    @Test
+@Test
     public void withoutExceptionTest() throws ExecutorException {
         Executor<Person> personExecutor = new ExecutorImpl<>();
 
