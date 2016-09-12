@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class ExecutorImpl<T> implements Executor<T> {
 
-    private boolean inProcess;
+    private boolean wasExecuted;
 
     private Map<Task<? extends T>, Validator<? extends T>> taskMap = new HashMap<>();
     private List<T> validResults = new ArrayList<>();
@@ -18,7 +18,7 @@ public class ExecutorImpl<T> implements Executor<T> {
 
     @Override
     public void addTask(Task<? extends T> task) throws ExecutorException {
-        if(inProcess){
+        if(wasExecuted){
             throw new ExecutorException("Tasks have already been executed ");
         }
         taskMap.put(task, null);
@@ -27,7 +27,7 @@ public class ExecutorImpl<T> implements Executor<T> {
 
     @Override
     public void addTask(Task<? extends T> task, Validator<? extends T> validator) throws ExecutorException {
-        if(inProcess){
+        if(wasExecuted){
             throw new ExecutorException("Tasks have already been executed ");
         }
         taskMap.put(task, validator);
@@ -37,12 +37,14 @@ public class ExecutorImpl<T> implements Executor<T> {
     @Override
     public void execute() {
         for(Map.Entry<? extends Task<? extends T>, ? extends Validator<? extends T>> task : taskMap.entrySet()){
-            task.getKey().execute();
-            if (task.getValue() == null) {
-                validResults.add(task.getKey().getResult());
+            Task<? extends T> taskKey = task.getKey();
+            Validator<? extends T> taskValue = task.getValue();
+            taskKey.execute();
+            if (taskValue == null) {
+                validResults.add(taskKey.getResult());
             } else {
-                T result = task.getKey().getResult();
-                Validator<T> value = (Validator<T>)task.getValue();
+                T result = taskKey.getResult();
+                Validator<T> value = (Validator<T>) taskValue;
                 if (value.isValid(result)) {
                     validResults.add(result);
                 } else {
@@ -50,12 +52,12 @@ public class ExecutorImpl<T> implements Executor<T> {
                 }
             }
         }
-        inProcess = true;
+        wasExecuted = true;
     }
 
     @Override
     public List<T> getValidResults() throws ExecutorException {
-        if(!inProcess){
+        if(!wasExecuted){
             throw new ExecutorException("Execution method has to be invoked");
         }
         return validResults;
@@ -63,7 +65,7 @@ public class ExecutorImpl<T> implements Executor<T> {
 
     @Override
     public List<T> getInvalidResults() throws ExecutorException {
-        if(!inProcess){
+        if(!wasExecuted){
             throw new ExecutorException("Execution method has to be invoked");
         }
         return invalidResults;
