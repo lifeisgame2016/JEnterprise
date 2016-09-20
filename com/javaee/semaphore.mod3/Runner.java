@@ -13,7 +13,7 @@ public class Runner {
     public static void main(String[] args) {
 
         ExecutorService executor = Executors.newCachedThreadPool();
-        InitSemaphore semaphore = new InitSemaphore(3,5);
+        SemaphoreImpl semaphore = new SemaphoreImpl(3,5);
         Random random = new Random();
 
         IntStream.range(0, 10).forEach((i) -> new Thread(() -> {

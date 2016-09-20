@@ -3,11 +3,11 @@ package javaee.semaphore.mod3;
 /**
  * Created by Den on 02.09.2016.
  */
-public class InitSemaphore implements Semaphore {
+public class SemaphoreImpl implements Semaphore {
     private int permits;
     private final int MAX_PERMITS;
 
-    public InitSemaphore(int permits, int maxPermits) {
+    public SemaphoreImpl(int permits, int maxPermits) {
         this.permits = permits;
         this.MAX_PERMITS = maxPermits;
     }
